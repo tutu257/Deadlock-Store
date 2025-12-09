@@ -53,12 +53,44 @@ function createItems(items, selector) {
     const item = items[i];
     const textClass = item.small ? "small-text" : "";
     const itemHtml = `<div class="item">
-                  <img src="${item.image}" />
-                  <div class="${textClass}">${item.name}</div>
-                </div>`;
+    <img src="${item.image}" />
+    <div class="${textClass}">${item.name}</div>
+    </div>`;
     card.insertAdjacentHTML("beforeend", itemHtml);
   }
 }
 
 createItems(tier1Items, ".tier-1 .content");
 createItems(tier2Items, ".tier-2 .content");
+
+const items = document.querySelectorAll(".item");
+const tooltip = document.querySelector(".tooltip");
+for (let i = 0; i < items.length; i++) {
+  items[i].addEventListener("mouseenter", (e) => {
+    // tooltip
+    tooltip.style.display = "unset";
+    const position = items[i].getBoundingClientRect();
+    if (window.innerWidth - position.right >= 380) {
+      tooltip.style.left = String(position.right + 14) + "px";
+      tooltip.style.top = String(position.top - 40) + "px";
+    } else {
+      tooltip.style.left = String(position.left - 380 - 14) + "px";
+      tooltip.style.top = String(position.top - 40) + "px";
+    }
+
+    // opacity
+    for (let j = 0; j < items.length; j++) {
+      if (items[i].isSameNode(items[j])) {
+        continue;
+      }
+
+      items[j].style.opacity = 0.6;
+    }
+  });
+  items[i].addEventListener("mouseleave", (e) => {
+    tooltip.style.display = "none";
+    for (let j = 0; j < items.length; j++) {
+      items[j].style.opacity = 1;
+    }
+  });
+}
